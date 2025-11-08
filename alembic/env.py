@@ -12,15 +12,16 @@ from alembic import context
 # ----------------------------------------------------
 
 # 프로젝트 루트 디렉토리를 Python Path에 추가합니다.
-# 이렇게 해야 Alembic이 'app.core.database' 및 'app.models'를 찾을 수 있습니다.
+# 이렇게 해야 Alembic이 'app.core.database' 및 'app.core.models'를 찾을 수 있습니다.
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
 # app/core/database.py 파일에서 정의한 Base 객체를 가져옵니다.
 from app.core.database import Base 
 
-# app/models.py 파일 (DB 설계)을 가져옵니다. 
-# Alembic이 이 파일 내의 SQLAlchemy 모델 클래스를 스캔하여 변경사항을 감지합니다.
-import app.models 
+# app/core/models 폴더를 가져옵니다. 
+# 🚨🚨 경로 수정! 🚨🚨
+# models 폴더가 core 안으로 들어갔으므로 경로를 'app.core.models'로 변경했습니다.
+import app.core.models 
 
 # ----------------------------------------------------
 # 🚨 2. [핵심 수정 부분] target_metadata 설정

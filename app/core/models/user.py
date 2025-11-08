@@ -1,12 +1,13 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from sqlalchemy.sql import func # 현재 시간을 기록하기 위해 func.now()를 사용합니다.
+from sqlalchemy.orm import relationship # 🚨 추가: 관계 설정을 위해 임포트
+from sqlalchemy.sql import func
 from app.core.database import Base # app.core.database에서 정의된 Base를 가져옵니다.
 from datetime import datetime
 
 class User(Base):
     """
     사용자 정보를 저장하는 테이블 모델.
-    회원가입 창의 필수 입력 정보와 약관 동의 정보를 포함합니다.
+    회원가입 창의 필수 입력 정보와 약관 동의 정보를 포함하며, OnboardingConfig와 1:1 관계를 가집니다.
     """
     __tablename__ = "users"
 
@@ -27,14 +28,18 @@ class User(Base):
     
     # 3. 서비스 및 계정 상태
     provider = Column(String, default="email") # 가입 방식: 'email' 또는 'google' 등
-
+    is_active = Column(Boolean, default=True) # 🚨 추가: 사용자 계정 활성화 상태
+    
     # 4. 약관 동의 정보 (회원가입 창에 명시된 필수/선택 동의 사항)
     is_terms_agreed = Column(Boolean, default=False, nullable=False) # 이용약관 동의 (필수)
     is_privacy_agreed = Column(Boolean, default=False, nullable=False) # 개인정보 처리방침 동의 (필수)
-  
+    is_marketing_agreed = Column(Boolean, default=False, nullable=False) # 🚨 추가: 마케팅 동의 (선택)
+    
 
     # 5. 시간 정보
     created_at = Column(DateTime(timezone=True), server_default=func.now()) # 가입 시점 기록
     
-    # 여기에 다른 필드나 관계를 추가할 수 있습니다.
-    # 예: posts = relationship("Post", back_populates="owner")
+    # 6. 관계 (Relationships)
+    # 🚨 추가: OnboardingConfig와 1:1 관계 설정 (back_populates="user", uselist=False)
+    # User.config로 온보딩 설정에 접근 가능
+    config = relationship("OnboardingConfig", back_populates="user", uselist=False)

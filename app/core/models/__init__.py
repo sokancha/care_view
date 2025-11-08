@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
 from .user import User
+from .onboarding import OnboardingConfig
 
 # BaseUser: 사용자 정보를 담는 기본 스키마 (필수 필드)
 class BaseUser(BaseModel):
