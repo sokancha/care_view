@@ -50,12 +50,8 @@ class OnboardingConfig(Base):
     job_type = Column(String(30), nullable=True) # 선택된 직업 유형 (예: 'student', 'worker')
     activity_level = Column(String(30), nullable=True) # 신체 활동 수준 (예: 'moderate', 'high')
 
-    # 6. 식사 시간 (Meal Timing) - Step 5 
-    breakfast_time = Column(String(10), nullable=True) # 아침 식사 시간 (HH:MM 형식)
-    lunch_time = Column(String(10), nullable=True)      # 점심 식사 시간 (HH:MM 형식)
-    dinner_time = Column(String(10), nullable=True)     # 저녁 식사 시간 (HH:MM 형식) 
 
-    # 7. 완료 상태 및 시간 - Step 6
+    # 6. 완료 상태 및 시간 - Step 6
     # 온보딩 완료 여부 (True/False)를 저장합니다.
     is_onboarding_complete = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

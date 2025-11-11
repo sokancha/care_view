@@ -17,6 +17,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: a26718408
       POSTGRES_DB: careview_db
+
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: health_db
+
     ports:
       - "5432:5432"
     volumes:
