@@ -43,8 +43,6 @@ class OnboardingConfig(Base):
     current_weight_kg = Column(Float, nullable=True) # 현재 체중 (kg)
     target_weight_kg = Column(Float, nullable=True)  # 목표 체중 (kg)
     
-    # 알레르기 상세 정보 (지병 컬럼은 제거되었습니다)
-    allergies = Column(Text, nullable=True) 
     
     # 5. 직업/활동 레벨 (Activity Level) - Step 4
     job_type = Column(String(30), nullable=True) # 선택된 직업 유형 (예: 'student', 'worker')

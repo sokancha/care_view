@@ -3,6 +3,8 @@ from sqlalchemy.orm import relationship # 🚨 추가: 관계 설정을 위해 �
 from sqlalchemy.sql import func
 from app.core.database import Base # app.core.database에서 정의된 Base를 가져옵니다.
 from datetime import datetime
+from .allergy import user_allergy_association
+
 
 class User(Base):
     """
@@ -43,3 +45,9 @@ class User(Base):
     # 🚨 추가: OnboardingConfig와 1:1 관계 설정 (back_populates="user", uselist=False)
     # User.config로 온보딩 설정에 접근 가능
     config = relationship("OnboardingConfig", back_populates="user", uselist=False)
+
+    allergies = relationship(
+    "Allergy",
+    secondary=user_allergy_association,
+    back_populates="users"
+)
