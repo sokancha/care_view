@@ -51,3 +51,5 @@ class User(Base):
     secondary=user_allergy_association,
     back_populates="users"
 )
+
+metrics = relationship("HealthMetric", back_populates="user")
