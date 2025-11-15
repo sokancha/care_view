@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-# from app.models.user import User  # 🚨 이전 경로 (주석 처리 또는 삭제)
+#from app.core.models.user import User  # 🚨 이전 경로 (주석 처리 또는 삭제)
 
 # 🚨 수정! 🚨
 # 이제 models 폴더는 core 안에 있으므로 경로를 'app.core.models'로 변경합니다.
