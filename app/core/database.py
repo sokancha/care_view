@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 # 🚨 중요: Docker Compose 내부 통신 HOST는 'db'
 # '********' 부분은 실제 POSTGRES_PASSWORD 값으로 대체해야 합니다.
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:a26718408@db:5432/careview_db"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:awrdezcqe1324!@db:5432/careview_db"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
