@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   fastapi_app:
     build: .
@@ -9,6 +8,8 @@ services:
     depends_on:
       - db
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      SECRET_KEY : "UfPEGpDrvk3AdtCPmaaorMFFMkHpCnH1Bv-Qa8pXH4k"
 
   db:
     image: postgres:18-alpine 
@@ -17,7 +18,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: awrdezcqe1324!
       POSTGRES_DB: careview_db
-
     ports:
       - "5432:5432"
     volumes:
