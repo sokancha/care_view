@@ -5,6 +5,7 @@ from .user import User
 from .onboarding import OnboardingConfig
 from .allergy import Allergy
 from .main_health_metric import HealthMetric 
+from .meal import *
 
 # BaseUser: 사용자 정보를 담는 기본 스키마 (필수 필드)
 class BaseUser(BaseModel):
