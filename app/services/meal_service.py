@@ -26,9 +26,9 @@ async def get_main_page_recommendations(db: AsyncSession, user_id: int) -> Dict[
     
     user: User | None = (await db.execute(user_query)).scalar_one_or_none()
 
-    if user and hasattr(user, 'allergies') and user.allergies:
+    if user and user.allergies:
         # 사용자가 가진 알레르기 ID 목록을 추출
-        forbidden_allergy_ids: List[int] = [allergy.id for allergy in user.allergies]
+        forbidden_allergy_ids: List[int] = [allergy.id for allergy in user.allergies] # type: ignore
     else:
         # 알레르기 정보가 없으면 필터링하지 않습니다.
         forbidden_allergy_ids: List[int] = []
