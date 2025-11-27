@@ -53,3 +53,11 @@ def custom_openapi():
     return app.openapi_schema
 
 app.openapi = custom_openapi
+
+@app.get("/health", status_code=200, tags=["Health Check"])
+def health_check():
+    """
+    Render 헬스 체크를 위한 엔드포인트.
+    데이터베이스 연결 확인 등의 로직을 추가할 수도 있습니다.
+    """
+    return {"status": "ok", "message": "Server is running"}
