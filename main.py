@@ -1,123 +1,26 @@
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import AsyncEngine # AsyncEngine 타입 임포트
-from sqlalchemy.sql import text # 🚨 Pylance 경고 제거를 위해 text() 함수 임포트
-from contextlib import asynccontextmanager
-import os
-from fastapi.openapi.utils import get_openapi
-from typing import AsyncGenerator, Optional # Optional 추가 임포트
-
-# 프로젝트 내부 모듈 임포트
-from app.core.config import settings
+from fastapi import FastAPI
 from app.api.endpoints import user as user_api
 from app.api.endpoints import onboarding as onboarding_api
-from app.api.endpoints import main_page as main_page_api
 from app.api.endpoints import record as record_api
-from app.core.db_session import get_async_engine, Base # get_async_engine, Base 임포트
+from fastapi.openapi.utils import get_openapi
+from app.api.endpoints import main_page as main_page_api
 
-# 전역 변수 초기화 및 타입 힌트 적용
-async_engine: Optional[AsyncEngine] = None
-AsyncSessionLocal = None
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """
-    애플리케이션 시작 시 DB 연결 설정 및 테이블 생성(마이그레이션)을 수행합니다.
-    종료 시 DB 연결을 정리합니다.
-    """
-    global async_engine, AsyncSessionLocal
-    
-    # config.py에서 로드된 settings 객체를 사용하여 DB URL을 가져옵니다.
-    DB_URL = settings.DATABASE_URL 
-
-    if not DB_URL:
-        # 환경 변수가 설정되지 않은 경우 오류 발생 (Render 환경 변수 설정 필수)
-        raise RuntimeError("DATABASE_URL 환경 변수가 설정되지 않았습니다.")
-
-    # 비동기 엔진 및 세션 팩토리 초기화
-    # get_async_engine은 (AsyncEngine, async_sessionmaker) 튜플을 반환합니다.
-    async_engine, AsyncSessionLocal = get_async_engine(DB_URL)
-    
-    # 🚨 Pylance 경고 제거: 초기화 후 async_engine이 None이 아님을 명시적으로 선언
-    assert async_engine is not None 
-    
-    print("데이터베이스 비동기 연결 설정 완료.")
-
-    # 서버 시작 시, DB 스키마(테이블) 자동 생성/마이그레이션 실행
-    # begin() 호출 전에 assert 했으므로 Pylance 오류가 사라집니다.
-    async with async_engine.begin() as conn: 
-        print("데이터베이스 테이블 생성(마이그레이션) 시작...")
-        # Base.metadata.create_all은 동기 함수이므로 run_sync로 실행합니다.
-        await conn.run_sync(Base.metadata.create_all) 
-        print("데이터베이스 테이블 생성 완료.")
-
-    # 서버 시작
-    yield
-    
-    # 서버 종료 시 엔진 연결 정리
-    if async_engine is not None: 
-        await async_engine.dispose()
-    print("애플리케이션 종료 작업 완료.")
-
-# ------------------------------------------------------------
-# 4. FastAPI 애플리케이션 인스턴스 생성
-# ------------------------------------------------------------
 
 app = FastAPI(
     title="CareView API",
     version="v1",
-    description="로그인, 회원가입, 일정 관리 등을 위한 API",
-    lifespan=lifespan # 라이프사이클 관리 함수 적용
+    description="로그인, 회원가입, 일정 관리 등을 위한 API"
 )
-
-# ------------------------------------------------------------
-# 5. DB 세션 의존성 주입 함수
-# ------------------------------------------------------------
-
-async def get_async_db() -> AsyncGenerator[AsyncSession, None]:
-    """
-    비동기 DB 세션을 제공하는 의존성 주입 함수입니다.
-    """
-    if AsyncSessionLocal is None:
-        raise HTTPException(status_code=500, detail="Database not initialized")
-
-    try:
-        # AsyncSessionLocal을 사용하여 비동기 세션 생성
-        async with AsyncSessionLocal() as session:
-            yield session
-    finally:
-        pass 
-
-# ------------------------------------------------------------
-# 6. 라우터 포함 (API 엔드포인트)
-# ------------------------------------------------------------
 
 app.include_router(user_api.router, tags=["Users"])
 app.include_router(onboarding_api.router, tags=["Onboarding"])
 app.include_router(record_api.router, tags=["Record"])
 app.include_router(main_page_api.router, tags=["Main Page"])
 
-@app.get("/", tags=["Root"])
+@app.get("/")
 def read_root():
     return {"message": "Welcome to CareView API V1"}
 
-# 헬스 체크 엔드포인트 추가 (DB 연결 확인용)
-@app.get("/health", tags=["Root"])
-async def health_check(db: AsyncSession = Depends(get_async_db)):
-    """
-    DB 연결 상태를 포함한 헬스 체크 엔드포인트입니다.
-    """
-    try:
-        # 🚨 Pylance 경고 제거: 문자열 쿼리를 text() 함수로 감싸서 Executable 객체로 변환
-        await db.execute(text("SELECT 1")) 
-        return {"status": "ok", "db_connection": "successful"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"DB Connection Failed: {e}")
-
-# ------------------------------------------------------------
-# 7. OpenAPI (Swagger) 커스텀 설정
-# ------------------------------------------------------------
 
 def custom_openapi():
     if app.openapi_schema:
@@ -130,7 +33,6 @@ def custom_openapi():
         routes=app.routes,
     )
     
-    # "BearerAuth"라는 이름으로 HTTP Bearer 스키마를 정의
     openapi_schema["components"]["securitySchemes"] = {
         "BearerAuth": {
             "type": "http",
@@ -143,7 +45,7 @@ def custom_openapi():
     for route in openapi_schema["paths"].values():
         for method in route.values():
             tags = method.get('tags', [])
-            # 인증이 필요한 모든 태그에 보안 적용
+            # 🚨 수정: 인증이 필요한 모든 태그에 보안 적용
             if tags and any(tag in ['Users', 'Onboarding', 'Record', 'Main Page'] for tag in tags):
                 method["security"] = security_requirement
 
