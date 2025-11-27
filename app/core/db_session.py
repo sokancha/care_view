@@ -1,13 +1,12 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker # type: ignore
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker, AsyncEngine # type: ignore
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.engine import Engine
 from typing import Tuple
 
 # 모든 모델이 상속받을 기본 클래스 (기존 Base와 동일)
 Base = declarative_base()
 
 # 비동기 엔진과 세션 팩토리를 생성하는 함수
-def get_async_engine(db_url: str) -> Tuple[Engine, async_sessionmaker[AsyncSession]]:
+def get_async_engine(db_url: str) -> Tuple[AsyncEngine, async_sessionmaker[AsyncSession]]:
     """
     주어진 URL로 비동기 PostgreSQL 엔진과 세션 팩토리를 생성합니다.
     """
