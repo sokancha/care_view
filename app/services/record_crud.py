@@ -4,7 +4,6 @@ from datetime import datetime, date, timedelta
 from typing import Optional, List, Tuple
 from app.models.main_health_metric import HealthMetric
 from app.models.onboarding import OnboardingConfig
-from decimal import Decimal
 
 
 def calculate_bmi(weight_kg: float, height_cm: float) -> float:
@@ -28,7 +27,7 @@ def create_health_metric(
     config = db.query(OnboardingConfig).filter(OnboardingConfig.user_id == user_id).first()
     bmi = None
     if config and config.height_cm:
-        bmi = calculate_bmi(weight_kg, float(config.height_cm))
+        bmi = calculate_bmi(weight_kg, config.height_cm)
     
     # 기록 시간이 없으면 현재 시간 사용
     if recorded_at is None:
@@ -73,7 +72,7 @@ def update_health_metric(
         # BMI 재계산
         config = db.query(OnboardingConfig).filter(OnboardingConfig.user_id == metric.user_id).first()
         if config and config.height_cm:
-            metric.bmi = calculate_bmi(weight_kg, float(config.height_cm)) # type: ignore
+            metric.bmi = calculate_bmi(weight_kg, config.height_cm) # type: ignore
     
     if sleep_duration_hours is not None:
         metric.sleep_duration_hours = sleep_duration_hours # type: ignore
@@ -83,7 +82,7 @@ def update_health_metric(
     
     if recorded_at is not None:
         metric.recorded_at = recorded_at # type: ignore
-     
+    
     db.commit()
     db.refresh(metric)
     return metric
@@ -190,8 +189,7 @@ def calculate_weight_change(db: Session, user_id: int, current_metric: HealthMet
     ).order_by(desc(HealthMetric.recorded_at)).first()
     
     if previous_metric:
-        weight_change_decimal = current_metric.weight_kg - previous_metric.weight_kg
-        return float(round(weight_change_decimal, 1))
+        return round(current_metric.weight_kg - previous_metric.weight_kg, 1)
     
     return None
 
