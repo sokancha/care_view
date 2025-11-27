@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from app.core.database import Base # app.core.database에서 정의된 Base를 가져옵니다.
-from app.models.meal import RecipeAllergen
+
 
 # 1. 사용자-알레르기 중간 테이블 정의 (SQLAlchemy Core Table)
 # User와 Allergy의 다대다(Many-to-Many) 관계를 연결합니다.
@@ -35,13 +35,10 @@ class Allergy(Base):
         "User", 
         secondary=user_allergy_association, 
         back_populates="allergies"
+        
     )
 
     recipes = relationship("RecipeAllergen", back_populates="allergy")
 
     def __repr__(self):
         return f"<Allergy(id={self.id}, name='{self.name}')>"
-    
-
-
-    
