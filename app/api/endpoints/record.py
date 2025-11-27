@@ -36,7 +36,7 @@ def create_health_record(
     """새 건강 기록 추가 (+ 버튼)"""
     new_metric = record_crud.create_health_metric(
         db=db,
-        user_id=current_user.id,
+        user_id=current_user.id, # type: ignore
         weight_kg=metric_data.weight_kg,
         sleep_duration_hours=metric_data.sleep_duration_hours,
         exercise_duration_hours=metric_data.exercise_duration_hours,
@@ -44,7 +44,7 @@ def create_health_record(
     )
     
     # 전일 대비 체중 변화 계산
-    weight_change = record_crud.calculate_weight_change(db, current_user.id, new_metric)
+    weight_change = record_crud.calculate_weight_change(db, current_user.id, new_metric) # type: ignore
     
     response = HealthMetricResponse.model_validate(new_metric)
     response.weight_change = weight_change
@@ -64,14 +64,14 @@ def get_health_record_detail(
     db: Session = Depends(get_db)
 ):
     """특정 건강 기록 상세 조회"""
-    metric = record_crud.get_health_metric_by_id(db, metric_id, current_user.id)
+    metric = record_crud.get_health_metric_by_id(db, metric_id, current_user.id) # type: ignore
     if not metric:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="기록을 찾을 수 없습니다."
         )
     
-    weight_change = record_crud.calculate_weight_change(db, current_user.id, metric)
+    weight_change = record_crud.calculate_weight_change(db, current_user.id, metric) # type: ignore
     
     response = HealthMetricResponse.model_validate(metric)
     response.weight_change = weight_change
@@ -92,7 +92,7 @@ def update_health_record(
     db: Session = Depends(get_db)
 ):
     """건강 기록 수정"""
-    metric = record_crud.get_health_metric_by_id(db, metric_id, current_user.id)
+    metric = record_crud.get_health_metric_by_id(db, metric_id, current_user.id) # type: ignore
     if not metric:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -108,7 +108,7 @@ def update_health_record(
         recorded_at=metric_data.recorded_at
     )
     
-    weight_change = record_crud.calculate_weight_change(db, current_user.id, updated_metric)
+    weight_change = record_crud.calculate_weight_change(db, current_user.id, updated_metric) # type: ignore
     
     response = HealthMetricResponse.model_validate(updated_metric)
     response.weight_change = weight_change
@@ -138,15 +138,15 @@ def get_record_page(
         target_date = date.today()
     
     # 주간 기록
-    weekly_records_data = record_crud.get_weekly_records(db, current_user.id, target_date)
+    weekly_records_data = record_crud.get_weekly_records(db, current_user.id, target_date) # type: ignore
     
     # 각 기록에 전일 대비 체중 변화 추가
     for daily_record in weekly_records_data["daily_records"]:
         for metric in daily_record["metrics"]:
-            metric.weight_change = record_crud.calculate_weight_change(db, current_user.id, metric)
+            metric.weight_change = record_crud.calculate_weight_change(db, current_user.id, metric) # type: ignore
     
     # 주간 요약
-    weekly_summary_data = record_crud.get_weekly_summary(db, current_user.id, target_date)
+    weekly_summary_data = record_crud.get_weekly_summary(db, current_user.id, target_date) # type: ignore
     
     return RecordPageResponse(
         current_year=target_date.year,
@@ -181,15 +181,15 @@ def get_previous_week(
     previous_week_date = current_date - timedelta(days=7)
     
     # 주간 기록
-    weekly_records_data = record_crud.get_weekly_records(db, current_user.id, previous_week_date)
+    weekly_records_data = record_crud.get_weekly_records(db, current_user.id, previous_week_date) # type: ignore
     
     # 전일 대비 체중 변화 추가
     for daily_record in weekly_records_data["daily_records"]:
         for metric in daily_record["metrics"]:
-            metric.weight_change = record_crud.calculate_weight_change(db, current_user.id, metric)
+            metric.weight_change = record_crud.calculate_weight_change(db, current_user.id, metric) # type: ignore
     
     # 주간 요약
-    weekly_summary_data = record_crud.get_weekly_summary(db, current_user.id, previous_week_date)
+    weekly_summary_data = record_crud.get_weekly_summary(db, current_user.id, previous_week_date) # type: ignore
     
     # 이전 주의 연도/월 계산 (해당 주의 시작일 기준)
     prev_year = weekly_records_data["start_date"].year
@@ -227,15 +227,15 @@ def get_next_week(
     next_week_date = current_date + timedelta(days=7)
     
     # 주간 기록
-    weekly_records_data = record_crud.get_weekly_records(db, current_user.id, next_week_date)
+    weekly_records_data = record_crud.get_weekly_records(db, current_user.id, next_week_date) # type: ignore
     
     # 전일 대비 체중 변화 추가
     for daily_record in weekly_records_data["daily_records"]:
         for metric in daily_record["metrics"]:
-            metric.weight_change = record_crud.calculate_weight_change(db, current_user.id, metric)
+            metric.weight_change = record_crud.calculate_weight_change(db, current_user.id, metric) # type: ignore
     
     # 주간 요약
-    weekly_summary_data = record_crud.get_weekly_summary(db, current_user.id, next_week_date)
+    weekly_summary_data = record_crud.get_weekly_summary(db, current_user.id, next_week_date) # type: ignore
     
     # 다음 주의 연도/월 계산 (해당 주의 시작일 기준)
     next_year = weekly_records_data["start_date"].year
