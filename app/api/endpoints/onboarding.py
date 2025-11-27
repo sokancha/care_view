@@ -14,7 +14,6 @@ from app.schemas.onboarding import (
 from app.api.dependencies import get_current_user
 from app.services import onboarding_crud
 from app.models.user import User
-from typing import Dict, Any
 
 # APIRouter 객체 생성
 router = APIRouter(prefix="/api/onboarding", tags=["Onboarding"])
@@ -32,11 +31,11 @@ def get_onboarding_status(
     db: Session = Depends(get_db)
 ):
     """현재 사용자의 온보딩 진행 상태 조회. 설정이 없으면 새로 생성합니다."""
-    config = onboarding_crud.get_onboarding_config(db, user_id=current_user.id)
+    config = onboarding_crud.get_onboarding_config(db, user_id=current_user.id) # type: ignore
     
     # 온보딩 설정이 없으면 새로 생성
     if not config:
-        config = onboarding_crud.create_onboarding_config(db, user_id=current_user.id)
+        config = onboarding_crud.create_onboarding_config(db, user_id=current_user.id) # type: ignore
     
     return config
 
@@ -64,7 +63,7 @@ def set_goal(
     
     config = onboarding_crud.update_step1_goal(
         db=db,
-        user_id=current_user.id,
+        user_id=current_user.id, # type: ignore
         goal=step_data.goal
     )
     
@@ -87,7 +86,7 @@ def set_workout_schedule(
     
     # 요일 검증
     valid_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-    schedule_to_save: Dict[str, Any] = {}
+    schedule_to_save = {}
 
     for day, slot in step_data.weekly_workout_schedule.items():
         if day not in valid_days:
@@ -96,23 +95,24 @@ def set_workout_schedule(
                 detail=f"올바르지 않은 요일입니다: {day}"
             )
         
-        start_time = slot.start_time
-        end_time = slot.end_time
+        has_start = slot.start_time is not None
+        has_end = slot.end_time is not None
 
         # 1. 일관성 검증: 시작 시간과 종료 시간 중 하나만 있으면 안 됨 (둘 다 None이거나 둘 다 str이어야 함)
-        if (start_time is not None) != (end_time is not None):
+        if has_start != has_end:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"[{day}] 시작 시간과 종료 시간 중 하나만 제공되었습니다. 둘 다 설정하거나 둘 다 비워두세요."
             )
         
         # 2. 시간 순서 검증: 시작 < 종료여야 함 (시간 문자열 비교로 간단하게 처리)
-        if start_time is not None and end_time is not None:
-            if start_time >= end_time:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"[{day}] 시작 시간({start_time})은 종료 시간({end_time})보다 빨라야 합니다."
-                )
+        if has_start and has_end:
+            # 🚨 type: ignore 추가
+            if slot.start_time >= slot.end_time: # type: ignore 
+                 raise HTTPException(
+                     status_code=status.HTTP_400_BAD_REQUEST,
+                     detail=f"[{day}] 시작 시간({slot.start_time})은 종료 시간({slot.end_time})보다 빨라야 합니다."
+                 )
 
         # 🚨 수정된 부분: Pydantic 객체(slot)를 순수 Python dict으로 변환합니다.
         schedule_to_save[day] = slot.model_dump()
@@ -120,7 +120,7 @@ def set_workout_schedule(
     # CRUD 함수 호출 시 Dict[str, dict] 형태의 schedule_to_save 전달
     config = onboarding_crud.update_step2_schedule(
         db=db,
-        user_id=current_user.id,
+        user_id=current_user.id, # type: ignore
         schedule=schedule_to_save
     )
     
@@ -144,7 +144,7 @@ def set_basic_info(
     try:
         config = onboarding_crud.update_step3_basic_info(
             db=db,
-            user_id=current_user.id,
+            user_id=current_user.id, # type: ignore
             date_of_birth=step_data.date_of_birth,
             height_cm=step_data.height_cm,
             current_weight_kg=step_data.current_weight_kg,
@@ -182,7 +182,7 @@ def set_job_type(
     
     config = onboarding_crud.update_step4_job(
         db=db,
-        user_id=current_user.id,
+        user_id=current_user.id, # type: ignore
         job_type=step_data.job_type
     )
     
@@ -206,7 +206,7 @@ def complete_onboarding_flow(
     try:
         config = onboarding_crud.complete_onboarding(
             db=db,
-            user_id=current_user.id
+            user_id=current_user.id  # type: ignore
         )
         return config
     except ValueError as e:
