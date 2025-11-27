@@ -34,13 +34,13 @@ def get_main_dashboard(
     """
     
     # 1. 사용자 기본 정보
-    user_info = main_page_crud.get_user_basic_info(db, current_user.id)
+    user_info = main_page_crud.get_user_basic_info(db, current_user.id) # type: ignore
     
     # 2. 오늘의 건강 지표
-    today_metrics = main_page_crud.get_today_metrics(db, current_user.id)
+    today_metrics = main_page_crud.get_today_metrics(db, current_user.id) # type: ignore
     
     # 3. 일주일 추이 데이터
-    weekly_trends = main_page_crud.get_weekly_trends(db, current_user.id)
+    weekly_trends = main_page_crud.get_weekly_trends(db, current_user.id) # type: ignore
     
     return MainPageResponse(
         user_info=UserBasicInfo(**user_info),
