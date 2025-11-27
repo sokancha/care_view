@@ -34,9 +34,6 @@ orjson==3.11.3
 packaging==25.0
 passlib==1.7.4
 pathspec==0.12.1
-psycopg==3.2.13
-psycopg-binary==3.2.13
-psycopg2-binary==2.9.11
 pyasn1==0.6.1
 pycparser==2.23
 pydantic==2.12.0
