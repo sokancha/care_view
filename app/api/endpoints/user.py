@@ -71,5 +71,3 @@ def read_users_me(
 ):
     # 인증된 JWT 토큰을 사용하여 현재 로그인한 사용자 정보를 반환
     return current_user
-
-
