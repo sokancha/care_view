@@ -28,3 +28,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def create_tables(engine):
+    """DB 엔진을 사용하여 Base에 정의된 모든 테이블을 생성합니다."""
+    # 모든 모델 클래스(User, Allergy 등)를 포함하는 Base.metadata를 사용합니다.
+    Base.metadata.create_all(bind=engine)
