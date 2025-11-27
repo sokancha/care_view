@@ -14,7 +14,7 @@ from sqlalchemy import Integer, Float
 
 # revision identifiers, used by Alembic.
 revision: str = '6c3a1b2e4d0f'
-down_revision: Union[str, Sequence[str], None] = '31a7c8d9e0f1' # 레시피 30개 삽입 마이그레이션 다음 단계
+down_revision: Union[str, Sequence[str], None] = '5d0e2c3b8f7a' # 레시피 30개 삽입 마이그레이션 다음 단계
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

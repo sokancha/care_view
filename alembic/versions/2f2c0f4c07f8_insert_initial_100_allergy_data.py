@@ -15,7 +15,7 @@ from sqlalchemy.sql import table, column
 # revision identifiers, used by Alembic.
 # 이 부분이 Alembic이 리비전 ID를 인식하는 데 필수적인 부분입니다.
 revision: str = '2f2c0f4c07f8'
-down_revision: Union[str, Sequence[str], None] = 'e3d3c500cacc' 
+down_revision: Union[str, Sequence[str], None] = 'bd14f3b715e9'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

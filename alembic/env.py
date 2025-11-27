@@ -21,7 +21,7 @@ from app.core.database import Base
 # app/core/models 폴더를 가져옵니다. 
 # 🚨🚨 경로 수정! 🚨🚨
 # models 폴더가 core 안으로 들어갔으므로 경로를 'app.core.models'로 변경했습니다.
-import app.core.models 
+import app.models 
 
 # ----------------------------------------------------
 # 🚨 2. [핵심 수정 부분] target_metadata 설정

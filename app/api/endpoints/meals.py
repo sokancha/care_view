@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession # type: ignore
 from app.core.database import get_db 
 from app.schemas.meal import MainRecommendationSchema
 from app.services.meal_service import get_main_page_recommendations
