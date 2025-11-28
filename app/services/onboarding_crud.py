@@ -5,6 +5,7 @@ from app.models.allergy import Allergy
 import json
 from typing import Dict, Optional, List, Any
 from datetime import date # date 객체만 임포트
+from typing import List
 
 # 1. 온보딩 설정 조회 또는 생성 (CRUD 핵심 함수)
 
@@ -115,3 +116,7 @@ def complete_onboarding(db: Session, user_id: int) -> OnboardingConfig:
     db.commit()
     db.refresh(config)
     return config
+
+def get_all_allergies(db: Session) -> List[Allergy]:
+    """알레르기 전체 목록 조회"""
+    return db.query(Allergy).order_by(Allergy.id).all()
