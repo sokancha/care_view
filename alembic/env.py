@@ -8,7 +8,7 @@ from sqlalchemy import pool
 from alembic import context
 
 # ----------------------------------------------------
-# 🚨 1. [핵심 수정 부분] 프로젝트 경로 및 모델 import 
+# 1. 프로젝트 경로 및 모델 import
 # ----------------------------------------------------
 
 # 프로젝트 루트 디렉토리를 Python Path에 추가합니다.
@@ -18,13 +18,11 @@ sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..'
 # app/core/database.py 파일에서 정의한 Base 객체를 가져옵니다.
 from app.core.database import Base 
 
-# app/core/models 폴더를 가져옵니다. 
-# 🚨🚨 경로 수정! 🚨🚨
-# models 폴더가 core 안으로 들어갔으므로 경로를 'app.core.models'로 변경했습니다.
+# app/models 폴더를 가져옵니다. 
 import app.models 
 
 # ----------------------------------------------------
-# 🚨 2. [핵심 수정 부분] target_metadata 설정
+# 2. target_metadata 설정
 # ----------------------------------------------------
 
 # target_metadata를 Base.metadata로 설정하여 Alembic이 모델의 메타데이터를 사용하도록 합니다.
@@ -51,7 +49,7 @@ def run_migrations_offline() -> None:
 
     This configures the context with just a URL
     and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
+    here as well. By skipping the Engine creation
     we don't even need a DBAPI to be available.
 
     Calls to context.execute() here emit the given string to the
@@ -72,17 +70,34 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
-
+    
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-
+    # ----------------------------------------------------
+    # 🚨 수정된 부분: 환경 변수에서 URL을 가져와서 사용
+    # ----------------------------------------------------
+    db_url = os.environ.get("DATABASE_URL") 
+    
+    if db_url:
+        # 환경 변수 URL이 있다면, 직접 엔진을 생성합니다.
+        connectable = engine_from_config(
+            {"sqlalchemy.url": db_url}, # 환경 변수 URL을 설정에 주입
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+        )
+    else:
+        # 환경 변수가 없다면, alembic.ini의 기본 설정을 사용합니다.
+        connectable = engine_from_config(
+            config.get_section(config.config_ini_section, {}),
+            prefix="sqlalchemy.",
+            poolclass=pool.NullPool,
+        )
+        
+    # ----------------------------------------------------
+    # 나머지 코드는 동일합니다.
+    # ----------------------------------------------------
     with connectable.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata
