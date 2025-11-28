@@ -21,24 +21,25 @@ class OnboardingStep1(BaseModel):
 
 # Step 2: 주간 운동 스케줄
 class OnboardingStep2(BaseModel):
-    """온보딩 2단계 - 요일별 운동 가능 시간"""
-    weekly_workout_schedule: Dict[str, WorkoutTimeSlot] = Field(
-        ..., 
-        description="요일별 운동 시작 및 종료 시간"
-    )
+    """온보딩 2단계 - 요일별 운동 가능 시간 (7일 전체 필수)"""
+    monday: WorkoutTimeSlot = Field(..., description="월요일 운동 시간")
+    tuesday: WorkoutTimeSlot = Field(..., description="화요일 운동 시간")
+    wednesday: WorkoutTimeSlot = Field(..., description="수요일 운동 시간")
+    thursday: WorkoutTimeSlot = Field(..., description="목요일 운동 시간")
+    friday: WorkoutTimeSlot = Field(..., description="금요일 운동 시간")
+    saturday: WorkoutTimeSlot = Field(..., description="토요일 운동 시간")
+    sunday: WorkoutTimeSlot = Field(..., description="일요일 운동 시간")
 
     class Config:
         json_schema_extra = {
             "example": {
-                "weekly_workout_schedule": {
-                    "monday": {"start_time": "09:00", "end_time": "10:30"},
-                    "tuesday": {"start_time": "10:30", "end_time": "12:00"},
-                    "wednesday": {"start_time": None, "end_time": None}, # 운동 안 함
-                    "thursday": {"start_time": "14:00", "end_time": "15:00"},
-                    "friday": {"start_time": "18:00", "end_time": "19:30"},
-                    "saturday": {"start_time": "10:00", "end_time": "12:00"},
-                    "sunday": {"start_time": None, "end_time": None}
-                }
+                "monday": {"start_time": "09:00", "end_time": "10:30"},
+                "tuesday": {"start_time": "10:30", "end_time": "12:00"},
+                "wednesday": {"start_time": None, "end_time": None},
+                "thursday": {"start_time": "14:00", "end_time": "15:00"},
+                "friday": {"start_time": "18:00", "end_time": "19:30"},
+                "saturday": {"start_time": "10:00", "end_time": "12:00"},
+                "sunday": {"start_time": None, "end_time": None}
             }
         }
 
@@ -104,3 +105,54 @@ class OnboardingConfigResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class GoalResponse(BaseModel):
+    """운동 목적 선택지 응답"""
+    goals: List[str] = Field(..., description="선택 가능한 운동 목적 목록")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "goals": ["fat_loss", "muscle_gain"]
+            }
+        }
+
+class JobResponse(BaseModel):
+    """직업 선택지 응답"""
+    jobs: List[str] = Field(..., description="선택 가능한 직업 목록")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "jobs": ["student", "worker"]
+            }
+        }
+
+class AllergyItem(BaseModel):
+    """알레르기 항목"""
+    id: int = Field(..., description="알레르기 ID")
+    name: str = Field(..., description="알레르기 이름")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+                "name": "우유"
+            }
+        }
+
+class AllergyResponse(BaseModel):
+    """알레르기 선택지 응답"""
+    allergies: List[AllergyItem] = Field(..., description="선택 가능한 알레르기 목록 (ID 1~100)")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "allergies": [
+                    {"id": 1, "name": "우유"},
+                    {"id": 2, "name": "대두"},
+                    {"id": 3, "name": "메밀"}
+                ]
+            }
+        }
