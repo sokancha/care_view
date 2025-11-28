@@ -4,12 +4,26 @@ from app.api.endpoints import onboarding as onboarding_api
 from app.api.endpoints import record as record_api
 from fastapi.openapi.utils import get_openapi
 from app.api.endpoints import main_page as main_page_api
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
     title="CareView API",
     version="v1",
     description="로그인, 회원가입, 일정 관리 등을 위한 API"
+)
+
+origins = [
+    "http://localhost:3000",  
+    "http://localhost:8000",   
+]
+# 3. 미들웨어 추가
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,              # 허용할 출처 목록
+    allow_credentials=True,             # 자격 증명(쿠키, 인증 헤더) 전송 허용
+    allow_methods=["*"],                # 모든 HTTP 메서드 (GET, POST 등) 허용
+    allow_headers=["*"],                # 모든 HTTP 헤더 허용
 )
 
 app.include_router(user_api.router, tags=["Users"])
