@@ -2,6 +2,75 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, List
 from datetime import date
 
+class GoalResponse(BaseModel):
+    """운동 목적 선택지 응답"""
+    goals: List[str] = Field(..., description="선택 가능한 운동 목적 목록")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "goals": ["fat_loss", "muscle_gain"]
+            }
+        }
+
+class JobResponse(BaseModel):
+    """직업 선택지 응답"""
+    jobs: List[str] = Field(..., description="선택 가능한 직업 목록")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "jobs": ["student", "worker"]
+            }
+        }
+
+class AllergyItem(BaseModel):
+    """알레르기 항목"""
+    id: int = Field(..., description="알레르기 ID")
+    name: str = Field(..., description="알레르기 이름")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id": 1,
+                "name": "우유"
+            }
+        }
+
+class AllergyResponse(BaseModel):
+    """알레르기 선택지 응답"""
+    allergies: List[AllergyItem] = Field(..., description="선택 가능한 알레르기 목록 (ID 1~100)")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "allergies": [
+                    {"id": 1, "name": "우유"},
+                    {"id": 2, "name": "대두"},
+                    {"id": 3, "name": "메밀"}
+                ]
+            }
+        }
+
+# 온보딩 설정 응답 스키마
+class OnboardingConfigResponse(BaseModel):
+    """온보딩 설정 조회 응답"""
+    id: int
+    user_id: int
+    goal: Optional[str] = None
+    weekly_workout_schedule: Optional[str] = None
+    date_of_birth: Optional[date] = None
+    height_cm: Optional[float] = None
+    current_weight_kg: Optional[float] = None
+    job_type: Optional[str] = None
+    is_onboarding_complete: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+
+
 class WorkoutTimeSlot(BaseModel):
     start_time: Optional[str] = Field(None, description="운동 시작 시간 (30분 단위, 예: '09:00'). 운동하지 않는 경우 None")
     end_time: Optional[str] = Field(None, description="운동 종료 시간 (30분 단위, 예: '10:30'). 운동하지 않는 경우 None")
@@ -89,70 +158,3 @@ class OnboardingStep5(BaseModel):
         }
 
 
-
-# 온보딩 설정 응답 스키마
-class OnboardingConfigResponse(BaseModel):
-    """온보딩 설정 조회 응답"""
-    id: int
-    user_id: int
-    goal: Optional[str] = None
-    weekly_workout_schedule: Optional[str] = None
-    date_of_birth: Optional[date] = None
-    height_cm: Optional[float] = None
-    current_weight_kg: Optional[float] = None
-    job_type: Optional[str] = None
-    is_onboarding_complete: bool = False
-
-    class Config:
-        from_attributes = True
-
-
-class GoalResponse(BaseModel):
-    """운동 목적 선택지 응답"""
-    goals: List[str] = Field(..., description="선택 가능한 운동 목적 목록")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "goals": ["fat_loss", "muscle_gain"]
-            }
-        }
-
-class JobResponse(BaseModel):
-    """직업 선택지 응답"""
-    jobs: List[str] = Field(..., description="선택 가능한 직업 목록")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "jobs": ["student", "worker"]
-            }
-        }
-
-class AllergyItem(BaseModel):
-    """알레르기 항목"""
-    id: int = Field(..., description="알레르기 ID")
-    name: str = Field(..., description="알레르기 이름")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "id": 1,
-                "name": "우유"
-            }
-        }
-
-class AllergyResponse(BaseModel):
-    """알레르기 선택지 응답"""
-    allergies: List[AllergyItem] = Field(..., description="선택 가능한 알레르기 목록 (ID 1~100)")
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "allergies": [
-                    {"id": 1, "name": "우유"},
-                    {"id": 2, "name": "대두"},
-                    {"id": 3, "name": "메밀"}
-                ]
-            }
-        }
