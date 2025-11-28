@@ -77,7 +77,7 @@ def upgrade() -> None:
     Meal_Item 테이블을 생성하고 초기 품목 데이터를 삽입합니다.
     """
     # 1. Meal_Item 테이블 생성 (cooking_method 컬럼 추가)
-    """
+    
     op.create_table(
         'meal_items',
         sa.Column('item_id', sa.Integer, primary_key=True, index=True),
@@ -85,7 +85,7 @@ def upgrade() -> None:
         # 데이터베이스 스키마와 일치시키기 위해 cooking_method 추가 (nullable=True)
         sa.Column('cooking_method', sa.Text, nullable=True), 
     )
-    """
+    
     
     # 2. bulk_insert를 위한 테이블 객체 정의 (cooking_method 제외 - 데이터에 없으므로)
     meal_item_table = table(
