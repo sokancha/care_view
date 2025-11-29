@@ -14,7 +14,7 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:3000",  
+    "http://localhost:5178",  
     "http://localhost:8000",   
 ]
 # 3. 미들웨어 추가
