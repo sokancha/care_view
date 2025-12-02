@@ -31,13 +31,16 @@ def get_current_user(
 
     # 사용자 ID (sub) 추출
     user_id = payload.get("sub")
+    print(f"DEBUG: JWT Decoded ID (sub): {user_id}, Type: {type(user_id)}")
     if user_id is None:
+        print("DEBUG: User ID is None, raising exception.")
         raise credentials_exception
 
     # DB에서 사용자 ID로 사용자 객체 조회
     user = user_crud.get_user_by_id(db, user_id=user_id) 
     
     if user is None:
+        print(f"DEBUG: Failed to find user ID {user_id} in DB.")
         raise credentials_exception
         
     return user
