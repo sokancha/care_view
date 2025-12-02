@@ -106,7 +106,7 @@ INITIAL_INGREDIENTS = [
 
 def upgrade() -> None:
     """Upgrade schema: ingredients 테이블을 생성하고 데이터를 삽입합니다."""
-    
+    """
     # 1. ingredients 테이블 생성 (테이블이 이미 존재하면 오류가 발생할 수 있습니다.)
     # 컬럼이 사라졌다면 테이블을 삭제하고 다시 생성하는 것이 가장 안전합니다.
     # 만약 테이블이 이미 존재한다면, 다음 단계에서 오류가 발생할 수 있습니다.
@@ -120,7 +120,7 @@ def upgrade() -> None:
     except Exception as e:
         # 테이블이 이미 존재할 경우 (컬럼만 사라진 경우) DDL 오류는 무시합니다.
         print(f"ingredients 테이블 생성 중 오류 발생 (이미 존재할 가능성): {e}")
-
+    """
 
     # 2. bulk_insert를 위한 테이블 객체 정의
     ingredient_table = table(
