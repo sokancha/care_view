@@ -5,7 +5,7 @@ from app.api.endpoints import record as record_api
 from fastapi.openapi.utils import get_openapi
 from app.api.endpoints import main_page as main_page_api
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.api.endpoints import meals as meals_api
 
 app = FastAPI(
     title="CareView API",
@@ -14,7 +14,7 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:5173",  
+    "http://localhost:3000",  
     "http://localhost:8000",   
 ]
 # 3. 미들웨어 추가
@@ -30,6 +30,7 @@ app.include_router(user_api.router, tags=["Users"])
 app.include_router(onboarding_api.router, tags=["Onboarding"])
 app.include_router(record_api.router, tags=["Record"])
 app.include_router(main_page_api.router, tags=["Main Page"])
+app.include_router(meals_api.router, tags=["meals"])
 
 @app.get("/")
 def read_root():
