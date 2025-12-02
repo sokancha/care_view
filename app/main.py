@@ -61,7 +61,7 @@ def custom_openapi():
         for method in route.values():
             tags = method.get('tags', [])
             # 🚨 수정: 인증이 필요한 모든 태그에 보안 적용
-            if tags and any(tag in ['Users', 'Onboarding', 'Record', 'Main Page'] for tag in tags):
+            if tags and any(tag in ['Users', 'Onboarding', 'Record', 'Main Page', 'meals'] for tag in tags):
                 method["security"] = security_requirement
 
     app.openapi_schema = openapi_schema
