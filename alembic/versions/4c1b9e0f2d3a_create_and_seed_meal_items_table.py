@@ -69,15 +69,14 @@ def upgrade() -> None:
     """
     Meal_Item 테이블을 생성하고 초기 품목 데이터를 삽입합니다.
     """
-    # 1. Meal_Item 테이블 생성 (주석 해제)
-    # meal_items 테이블이 없었으므로, 이 부분을 활성화하여 테이블을 생성합니다.
-    op.create_table(
-        'meal_items',
-        sa.Column('item_id', sa.Integer, primary_key=True, index=True),
-        sa.Column('name', sa.String(255), nullable=False, unique=True),
-        # 데이터베이스 스키마와 일치시키기 위해 cooking_method 추가 (nullable=True)
-        sa.Column('cooking_method', sa.Text, nullable=True), 
-    )
+    # 1. Meal_Item 테이블 생성 (주석 처리 - 테이블이 이미 존재하거나 이전 시도에서 생성됨)
+    # op.create_table(
+    #     'meal_items',
+    #     sa.Column('item_id', sa.Integer, primary_key=True, index=True),
+    #     sa.Column('name', sa.String(255), nullable=False, unique=True),
+    #     # 데이터베이스 스키마와 일치시키기 위해 cooking_method 추가 (nullable=True)
+    #     sa.Column('cooking_method', sa.Text, nullable=True), 
+    # )
     
     # 2. bulk_insert를 위한 테이블 객체 정의
     meal_item_table = table(
@@ -87,6 +86,7 @@ def upgrade() -> None:
     )
 
     # 3. 초기 데이터 삽입
+    # 참고: 테이블에 이미 동일한 item_id를 가진 데이터가 있다면, 이 단계에서 Duplicate Key 오류가 발생할 수 있습니다.
     op.bulk_insert(
         meal_item_table,
         INITIAL_MEAL_ITEMS
