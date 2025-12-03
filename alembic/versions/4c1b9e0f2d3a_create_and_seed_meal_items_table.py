@@ -2,7 +2,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.sql import table, column 
+from sqlalchemy.sql import table, column
 from sqlalchemy import String, Integer, Text
 
 
