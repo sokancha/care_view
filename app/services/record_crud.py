@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, desc
+from sqlalchemy import and_
 from datetime import datetime, date, timedelta, time
-from typing import Optional
 
 from app.models.main_health_metric import HealthMetric
 from app.models.onboarding import OnboardingConfig
@@ -67,32 +66,6 @@ def upsert_health_metric(db: Session, user_id: int, data: HealthMetricCreate) ->
         return new_metric
 
 
-def calculate_weight_change(db: Session, user_id: int, current_metric: HealthMetric) -> Optional[float]:
-    """전일 대비 체중 변화량 계산"""
-    if not current_metric.weight_kg:
-        return None
-    
-    current_date = current_metric.recorded_at.date()
-    previous_date = current_date - timedelta(days=1)
-    prev_start = datetime.combine(previous_date, time.min)
-    prev_end = datetime.combine(previous_date, time.max)
-    
-    previous_metric = db.query(HealthMetric).filter(
-        and_(
-            HealthMetric.user_id == user_id,
-            HealthMetric.recorded_at >= prev_start,
-            HealthMetric.recorded_at <= prev_end,
-            HealthMetric.weight_kg.isnot(None)
-        )
-    ).first()
-    
-    if not previous_metric or not previous_metric.weight_kg:
-        return None
-    
-    change = round(current_metric.weight_kg - previous_metric.weight_kg, 1)
-    return change
-
-
 def get_weekly_records(db: Session, user_id: int, target_date: date) -> dict:
     """특정 날짜가 포함된 주의 기록 조회 (월~일)"""
     weekday = target_date.isoweekday()
@@ -120,8 +93,6 @@ def get_weekly_records(db: Session, user_id: int, target_date: date) -> dict:
         })
         
     return {
-        "year": start_date.year,
-        "week_number": start_date.isocalendar()[1],
         "start_date": start_date,
         "end_date": end_date,
         "daily_records": daily_records
@@ -132,7 +103,6 @@ def get_weekly_summary(db: Session, user_id: int, target_date: date) -> dict:
     """
     이번 주 요약 정보 계산
     - 최신일의 체중
-    - 이번주 시작일 체중 - 최신일 체중 (주간 감량량)
     - 총 운동 시간
     - 총 수면 시간
     """
@@ -151,36 +121,22 @@ def get_weekly_summary(db: Session, user_id: int, target_date: date) -> dict:
     if not metrics:
         return {
             "latest_weight_kg": None,
-            "weight_change_kg": None,
             "total_exercise_hours": 0.0,
             "total_sleep_hours": 0.0
         }
     
-    # 최신일의 체중
+    # 최신일의 체중 (마지막부터 역순 탐색)
     latest_weight = None
     for metric in reversed(metrics):
         if metric.weight_kg is not None:
             latest_weight = metric.weight_kg
             break
     
-    # 시작일의 체중
-    start_weight = None
-    for metric in metrics:
-        if metric.weight_kg is not None:
-            start_weight = metric.weight_kg
-            break
-    
-    # 주간 체중 변화량 = 시작일 - 최신일 (양수면 감량)
-    weight_change = None
-    if start_weight is not None and latest_weight is not None:
-        weight_change = round(start_weight - latest_weight, 1)
-    
     total_exercise = sum(m.exercise_duration_hours or 0.0 for m in metrics)
     total_sleep = sum(m.sleep_duration_hours or 0.0 for m in metrics)
     
     return {
         "latest_weight_kg": latest_weight,
-        "weight_change_kg": weight_change,
         "total_exercise_hours": round(total_exercise, 1),
         "total_sleep_hours": round(total_sleep, 1)
     }
