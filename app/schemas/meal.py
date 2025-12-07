@@ -9,6 +9,13 @@ class ItemNameSchema(BaseModel):
     class Config:
         from_attributes = True
 
+class IngredientNameSchema(BaseModel):
+    """Ingredient 모델의 이름만 포함하는 스키마"""
+    name: str 
+    
+    class Config:
+        from_attributes = True
+
 # --- 2. 레시피 구성 스키마 (핵심 수정) ---
 # DB의 recipe_composition 테이블 구조 + 관계를 반영합니다.
 class RecipeCompositionSchema(BaseModel):
@@ -88,6 +95,32 @@ class MainRecommendationResponse(BaseModel):
     dinner: Union[RecipeDetailSchema, None] = None
     
     totals: TotalNutritionSchema 
+    
+    class Config:
+        from_attributes = True
+
+class ItemIngredientDetailSchema(BaseModel):
+    amount: float
+    unit: str
+    # ItemIngredient 모델의 'ingredient' 관계에서 Ingredient.name을 가져옴
+    ingredient: IngredientNameSchema
+
+class CookingStepSchema(BaseModel):
+    step_number: int
+    step_description: str
+    
+    class Config:
+        from_attributes = True
+
+class MealItemRecipeSchema(BaseModel):
+    item_id: int
+    name: str
+    
+    # MealItem 모델의 'ingredients' 관계 참조
+    ingredients: List[ItemIngredientDetailSchema] 
+    
+    # MealItem 모델의 'cooking_steps' 관계 참조
+    cooking_steps: List[CookingStepSchema]
     
     class Config:
         from_attributes = True
