@@ -231,7 +231,7 @@ def upgrade() -> None:
     # op.bulk_insert를 사용하여 데이터 삽입
     op.bulk_insert(
         sa.table(
-            'recipe_sets',
+            'recipe_sets', # 테이블 이름: 'recipe_sets'
             sa.column('set_id', sa.Integer),
             sa.column('name', sa.String),
             sa.column('set_type', sa.String),
@@ -255,10 +255,11 @@ def downgrade() -> None:
     set_ids_to_delete = [data['set_id'] for data in RECIPE_SET_DATA]
     
     # DELETE 쿼리를 사용하여 해당 ID의 데이터 삭제
+    # ⚠️ 테이블 이름을 'recipe_sets'로 수정했습니다.
     op.execute(
-        sa.text("DELETE FROM recipe_set WHERE set_id IN :ids")
+        sa.text("DELETE FROM recipe_sets WHERE set_id IN :ids")
         .bindparams(ids=tuple(set_ids_to_delete))
     )
     
     # 데이터베이스 시퀀스 조정 (DB 종류에 따라 필요)
-    # op.execute(text("SELECT setval('recipe_set_set_id_seq', (SELECT MAX(set_id) FROM recipe_set), false)"))
+    # op.execute(text("SELECT setval('recipe_set_set_id_seq', (SELECT MAX(set_id) FROM recipe_sets), false)"))
