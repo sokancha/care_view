@@ -105,19 +105,17 @@ def get_recommendations_by_ingredients(
     "/convenience/sets",
     response_model=List[ConvenienceSetResponse], 
     summary="편의점 레시피 세트 목록 조회",
-    # 🚨 편의점 추천은 인증 없이도 제공될 수 있으므로 Depends(get_current_user)를 제거했습니다.
 )
 def get_convenience_recommendations(
     db: Session = Depends(get_db),
     # set_type 파라미터를 받아 특정 유형만 필터링 가능 (예: ?set_type=다이어트)
-    set_type: Union[str, None] = Query(None, description="선택적 식사 유형 필터 (예: 고단백, 운동 후, 간식)"),
 ):
     """
     편의점 식단 페이지에 표시할 레시피 세트 목록을 반환합니다. 
     구성된 상품의 상세 정보(이름, 양, 단위, 개별 영양소)를 포함합니다.
     """
     
-    recommended_sets = get_convenience_store_sets(db, set_type=set_type)
+    recommended_sets = get_convenience_store_sets(db)
     
     if not recommended_sets:
         # 추천 결과가 없으면 빈 리스트 반환
