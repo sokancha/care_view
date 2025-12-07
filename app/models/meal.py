@@ -61,6 +61,8 @@ class Ingredient(Base):
 
     # ORM 관계 (ItemIngredient와의 M:N 관계)
     meal_items = relationship("ItemIngredient", back_populates="ingredient")
+
+    allergens = relationship("IngredientAllergen", back_populates="ingredient")
     
     # 알레르기 관계는 IngredientAllergen 테이블을 통해 다른 파일에서 설정되어야 합니다.
     # allergies = relationship("IngredientAllergen", back_populates="ingredient")
