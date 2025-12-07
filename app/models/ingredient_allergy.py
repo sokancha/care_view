@@ -18,11 +18,11 @@ class IngredientAllergen(Base):
     
     # 복합 PK이자 외래 키: Allergy 테이블 참조
     # (주의: Allergy 테이블의 PK 컬럼 이름이 'allergy_id'여야 함)
-    allergy_id = Column(Integer, ForeignKey("allergies.allergy_id"), primary_key=True)
+    allergy_id = Column(Integer, ForeignKey("allergies.id"), primary_key=True)
     
     # ORM 관계
     # Ingredient 모델에 back_populates="allergens" 설정이 필요합니다.
     ingredient = relationship("Ingredient", back_populates="allergens")
     
     # Allergy 모델에 back_populates="ingredients" 설정이 필요합니다.
-    allergy = relationship("Allergy", back_populates="ingredients")
+    allergy = relationship("Allergy", back_populates="ingredients_allergens")
