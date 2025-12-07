@@ -38,6 +38,13 @@ class MealItem(Base):
     name = Column(String(255), nullable=False, unique=True)
     cooking_method = Column(Text, nullable=True)
 
+    cooking_steps = relationship(
+        "CookingStep", 
+        back_populates="item", 
+        order_by="CookingStep.step_number", # 순서대로 정렬 (선택 사항)
+        cascade="all, delete-orphan"        # MealItem 삭제 시 함께 삭제 (선택 사항)
+    )
+
     # ORM 관계
     # 레시피 구성 (RecipeComposition과의 M:N 관계)
     recipes = relationship("RecipeComposition", back_populates="item")
