@@ -40,5 +40,7 @@ class Allergy(Base):
 
     recipes = relationship("RecipeAllergen", back_populates="allergy")
 
+    ingredients_allergens = relationship("IngredientAllergen", back_populates="allergy")
+
     def __repr__(self):
         return f"<Allergy(id={self.id}, name='{self.name}')>"
