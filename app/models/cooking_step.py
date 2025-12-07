@@ -28,4 +28,4 @@ class CookingStep(Base):
 
     # ORM 관계
     # MealItem과의 관계 설정 (MealItem 모델에 back_populates를 설정해야 합니다.)
-    meal_item = relationship("MealItem", back_populates="cooking_steps")
+    item = relationship("MealItem", back_populates="cooking_steps")
