@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func
 from typing import List, Dict, Union
 
 # ----------------------------------------------------------------------
@@ -20,6 +21,8 @@ def get_convenience_store_sets(db: Session, limit: int = 6):
     set_composition과 convenience_items 상세 정보까지 Eager Loading합니다.
     """
     query = db.query(RecipeSet)
+
+    query = query.order_by(func.random())
 
     if limit > 0:
         query = query.limit(limit) # 🚨 limit 적용
