@@ -1,7 +1,8 @@
 # api/endpoints/meals.py
+
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session 
-from typing import List, Annotated
+from typing import List, Annotated, Union
 
 from app.core.database import get_db 
 from app.schemas.meal import MainRecommendationResponse, TotalNutritionSchema
@@ -13,7 +14,9 @@ from app.services.meals_items_crud import (
     get_user_allergy_ids, 
     get_meal_items_by_ingredients_and_allergens
 )
-from app.schemas.meal import MealItemRecipeSchema
+from app.schemas.meal import MealItemRecipeSchema, ConvenienceSetResponse
+from app.services.convenience_crud import get_convenience_store_sets
+
 
 router = APIRouter(prefix="/api/meals", tags=['meals'])
 
@@ -59,6 +62,7 @@ def get_main_recommendations(
     
     return response_data
 
+
 @router.get(
     "/recommendations/by-ingredients",
     response_model=List[MealItemRecipeSchema], # 🚨 Meal Item 응답 스키마 사용
@@ -96,3 +100,28 @@ def get_recommendations_by_ingredients(
     
     # 3. ORM 객체를 Pydantic 모델로 변환 (response_model이 처리)
     return recommended_items
+
+@router.get(
+    "/convenience/sets",
+    response_model=List[ConvenienceSetResponse], 
+    summary="편의점 레시피 세트 목록 조회",
+    # 🚨 편의점 추천은 인증 없이도 제공될 수 있으므로 Depends(get_current_user)를 제거했습니다.
+)
+def get_convenience_recommendations(
+    db: Session = Depends(get_db),
+    # set_type 파라미터를 받아 특정 유형만 필터링 가능 (예: ?set_type=다이어트)
+    set_type: Union[str, None] = Query(None, description="선택적 식사 유형 필터 (예: 고단백, 운동 후, 간식)"),
+):
+    """
+    편의점 식단 페이지에 표시할 레시피 세트 목록을 반환합니다. 
+    구성된 상품의 상세 정보(이름, 양, 단위, 개별 영양소)를 포함합니다.
+    """
+    
+    recommended_sets = get_convenience_store_sets(db, set_type=set_type)
+    
+    if not recommended_sets:
+        # 추천 결과가 없으면 빈 리스트 반환
+        return []
+    
+    # ORM 객체는 Pydantic 모델(response_model=List[ConvenienceSetResponse])에 의해 자동으로 변환됩니다.
+    return recommended_sets
