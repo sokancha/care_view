@@ -128,10 +128,6 @@ class MealItemRecipeSchema(BaseModel):
 class ConvenienceItemSchema(BaseModel):
     item_id: int
     name: str
-    calorie: float
-    carbs: float
-    protein: float
-    fat: float
     
     class Config:
         from_attributes = True
@@ -163,4 +159,3 @@ class ConvenienceSetResponse(BaseModel):
 
     class Config:
         from_attributes = True
-        
