@@ -124,3 +124,43 @@ class MealItemRecipeSchema(BaseModel):
     
     class Config:
         from_attributes = True
+
+class ConvenienceItemSchema(BaseModel):
+    item_id: int
+    name: str
+    calorie: float
+    carbs: float
+    protein: float
+    fat: float
+    
+    class Config:
+        from_attributes = True
+
+class SetCompositionSchema(BaseModel):
+    amount: float
+    unit: str
+    
+    # 🚨 핵심: SetComposition 모델의 'item' 관계 객체를 로드 (ConvenienceItemSchema 사용)
+    item: ConvenienceItemSchema 
+
+    class Config:
+        from_attributes = True
+
+class ConvenienceSetResponse(BaseModel):
+    set_id: int
+    name: str 
+    set_type: str 
+    image_url: Union[str, None]
+    
+    # 세트의 총 영양소 (RecipeSet 테이블 컬럼 그대로 매핑)
+    total_calorie: float
+    total_carbs: float
+    total_protein: float
+    total_fat: float
+    
+    # 🚨 핵심: 세트의 구성품 목록 (RecipeSet.composition 관계 객체 사용)
+    composition: List[SetCompositionSchema] 
+
+    class Config:
+        from_attributes = True
+        
