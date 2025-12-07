@@ -14,13 +14,17 @@ from app.models.convenience_item import (
 # ----------------------------------------------------------------------
 # 2. 편의점 세트 목록 조회 함수
 # ----------------------------------------------------------------------
-def get_convenience_store_sets(db: Session, set_type: Union[str, None] = None):
+def get_convenience_store_sets(db: Session, limit: int = 6):
     """
     모든 편의점 레시피 세트 목록을 조회합니다. 
     set_composition과 convenience_items 상세 정보까지 Eager Loading합니다.
     """
     query = db.query(RecipeSet)
 
+    if limit > 0:
+        query = query.limit(limit) # 🚨 limit 적용
+
+    # RecipeSet -> SetComposition -> ConvenienceItem의 관계를 미리 로드
     sets = query.options(
         joinedload(RecipeSet.composition)
         .joinedload(SetComposition.item) 
