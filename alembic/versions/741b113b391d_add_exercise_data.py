@@ -27,7 +27,7 @@ def upgrade() -> None:
     session = Session(bind=bind)
 
     # CSV 경로 (care_view 폴더 안)
-    csv_path = os.path.join(os.path.expanduser("~"), "care_view", "cleaned_exercise_data.csv")
+    csv_path = "cleaned_exercise_data.csv"
 
     # 모델 정의 (Alembic 환경에서 바로 사용)
     from sqlalchemy.ext.declarative import declarative_base
