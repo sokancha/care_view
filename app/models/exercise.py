@@ -1,14 +1,14 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import relationship
-# from app.core.database import Base # 실제 프로젝트 경로에 맞게 임포트 경로를 확인하세요.
+from app.core.database import Base # 실제 프로젝트 경로에 맞게 임포트 경로를 확인하세요.
 
 # SQLAlchemy의 Base 객체가 정의되었다고 가정합니다.
 # from sqlalchemy.ext.declarative import declarative_base
 # Base = declarative_base() 
 # (실제 프로젝트에서는 위 Base 정의 대신 프로젝트의 Base 객체를 사용하세요.)
 
-class Base: # 임시 Base 클래스 정의 (실제 사용 시 대체 필요)
-    pass 
+# class Base: # 임시 Base 클래스 정의 (실제 사용 시 대체 필요)
+#     pass 
 
 # ----------------------------------------------------------------------
 # 1. UserMaster (사용자 그룹 정보)
