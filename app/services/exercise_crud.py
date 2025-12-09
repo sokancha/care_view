@@ -193,18 +193,9 @@ def generate_daily_exercise_plan(
     )
     
     return {
-        "morning": {
-            "time_slot": "아침",
-            **morning_set
-        },
-        "lunch": {
-            "time_slot": "점심",
-            **lunch_set
-        },
-        "dinner": {
-            "time_slot": "저녁",
-            **dinner_set
-        },
+        "morning": morning_set,
+        "lunch": lunch_set,
+        "dinner": dinner_set,
         "total_duration_min": total_duration,
         "total_calorie_kcal": total_calorie
     }
