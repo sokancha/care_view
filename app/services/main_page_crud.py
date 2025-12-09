@@ -13,6 +13,12 @@ def get_user_basic_info(db: Session, user_id: int) -> dict:
     """사용자 기본 정보 조회 (이름, 나이, 키, 최신 BMI)"""
     user = db.query(User).filter(User.id == user_id).first()
     config = db.query(OnboardingConfig).filter(OnboardingConfig.user_id == user_id).first()
+
+    korean_age = None
+    if config and config.date_of_birth:
+        today = date.today()
+        # 생일이 지났는지 여부는 상관없이 연도만 계산하고 +1
+        korean_age = (today.year - config.date_of_birth.year) + 1
     
     # 최신 BMI 조회
     latest_metric = db.query(HealthMetric).filter(
@@ -21,7 +27,7 @@ def get_user_basic_info(db: Session, user_id: int) -> dict:
     
     return {
         "full_name": user.full_name if user else None,
-        "age": config.age if config else None,
+        "age": korean_age,
         "height_cm": config.height_cm if config else None,
         "bmi": latest_metric.bmi if latest_metric else None
     }
