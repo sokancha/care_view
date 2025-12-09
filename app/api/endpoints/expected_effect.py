@@ -92,6 +92,7 @@ def get_expected_effect(
         predicted_weight_4weeks=effect_data["predicted_weight_4weeks"],
         predicted_bmi_4weeks=effect_data["predicted_bmi_4weeks"],
         weight_change_4weeks=effect_data["weight_change_4weeks"],
+        bmi_change_4weeks=effect_data["bmi_change_4weeks"],
         total_exercise_minutes=effect_data["total_exercise_minutes"],
         weekly_predictions=[
             WeeklyPrediction(**pred) for pred in effect_data["weekly_predictions"]
