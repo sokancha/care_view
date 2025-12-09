@@ -1,0 +1,124 @@
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from datetime import date, timedelta
+from typing import List, Dict
+
+from app.models.main_health_metric import HealthMetric
+
+
+def calculate_bmi(weight_kg: float, height_cm: float) -> float:
+    """BMI 계산"""
+    height_m = height_cm / 100
+    return round(weight_kg / (height_m ** 2), 1)
+
+
+def get_total_exercise_minutes(db: Session, user_id: int) -> float:
+    """오늘까지 총 운동시간 계산 (분 단위)"""
+    total_hours = db.query(
+        func.sum(HealthMetric.exercise_duration_hours)
+    ).filter(
+        HealthMetric.user_id == user_id,
+        HealthMetric.exercise_duration_hours.isnot(None)
+    ).scalar()
+    
+    # 시간을 분으로 변환
+    total_minutes = (total_hours or 0.0) * 60
+    return round(total_minutes, 1)
+
+
+def predict_weight_change(
+    db: Session,
+    user_id: int,
+    current_weight: float,
+    daily_calorie_burn: float
+) -> Dict:
+    """
+    4주 후 체중 변화 예측
+    
+    Args:
+        db: 데이터베이스 세션
+        user_id: 사용자 ID
+        current_weight: 현재 체중 (kg)
+        daily_calorie_burn: 일일 운동 칼로리 소모 (kcal)
+    
+    Returns:
+        주차별 예측 데이터
+    """
+    
+    # 기본 칼로리 계산 (1kg 감량 = 7,700 kcal)
+    CALORIES_PER_KG = 7700
+    
+    # 주당 체중 감량 (kg)
+    weekly_weight_loss = (daily_calorie_burn * 7) / CALORIES_PER_KG
+    
+    # 주차별 예측
+    predictions = []
+    for week in range(1, 5):
+        predicted_weight = round(current_weight - (weekly_weight_loss * week), 1)
+        predictions.append({
+            "week": week,
+            "predicted_weight": predicted_weight
+        })
+    
+    return {
+        "weekly_weight_loss": weekly_weight_loss,
+        "predictions": predictions
+    }
+
+
+def generate_expected_effect(
+    db: Session,
+    user_id: int,
+    current_weight: float,
+    height_cm: float,
+    daily_calorie_burn: float
+) -> Dict:
+    """
+    기대 효과 데이터 생성
+    
+    Args:
+        db: 데이터베이스 세션
+        user_id: 사용자 ID
+        current_weight: 현재 체중 (kg)
+        height_cm: 키 (cm)
+        daily_calorie_burn: 추천 운동의 일일 칼로리 소모 (kcal)
+    
+    Returns:
+        기대 효과 전체 데이터
+    """
+    
+    # 1. 현재 BMI 계산
+    current_bmi = calculate_bmi(current_weight, height_cm)
+    
+    # 2. 4주 후 체중 예측
+    prediction_data = predict_weight_change(
+        db, user_id, current_weight, daily_calorie_burn
+    )
+    
+    predicted_weight_4weeks = prediction_data["predictions"][3]["predicted_weight"]
+    predicted_bmi_4weeks = calculate_bmi(predicted_weight_4weeks, height_cm)
+    
+    # 3. 주차별 BMI 계산
+    weekly_predictions = []
+    for pred in prediction_data["predictions"]:
+        weekly_predictions.append({
+            "week": pred["week"],
+            "predicted_weight": pred["predicted_weight"],
+            "predicted_bmi": calculate_bmi(pred["predicted_weight"], height_cm)
+        })
+    
+    # 4. 총 운동시간 (분)
+    total_exercise_minutes = get_total_exercise_minutes(db, user_id)
+    
+    # 5. 체중 변화량 (양수면 감량)
+    weight_change = round(current_weight - predicted_weight_4weeks, 1)
+    
+    return {
+        "current_weight": current_weight,
+        "current_bmi": current_bmi,
+        "predicted_weight_4weeks": predicted_weight_4weeks,
+        "predicted_bmi_4weeks": predicted_bmi_4weeks,
+        "weight_change_4weeks": weight_change,
+        "total_exercise_minutes": total_exercise_minutes,
+        "weekly_predictions": weekly_predictions
+    }
