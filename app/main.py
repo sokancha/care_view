@@ -7,6 +7,7 @@ from app.api.endpoints import main_page as main_page_api
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.endpoints import meals as meals_api
 from app.api.endpoints import exercise
+from app.api.endpoints import expected_effect
 
 app = FastAPI(
     title="CareView API",
@@ -34,6 +35,7 @@ app.include_router(record_api.router, tags=["Record"])
 app.include_router(main_page_api.router, tags=["Main Page"])
 app.include_router(meals_api.router, tags=["meals"])
 app.include_router(exercise.router, tags=["Exercise"])
+app.include_router(expected_effect.router, tags=["Expected Effect"])
 
 @app.get("/")
 def read_root():
@@ -64,7 +66,7 @@ def custom_openapi():
         for method in route.values():
             tags = method.get('tags', [])
             # 🚨 수정: 인증이 필요한 모든 태그에 보안 적용
-            if tags and any(tag in ['Users', 'Onboarding', 'Record', 'Main Page', 'meals', 'Exercise'] for tag in tags):
+            if tags and any(tag in ['Users', 'Onboarding', 'Record', 'Main Page', 'meals', 'Exercise', 'Expected Effect'] for tag in tags):
                 method["security"] = security_requirement
 
     app.openapi_schema = openapi_schema
