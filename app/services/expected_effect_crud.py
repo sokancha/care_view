@@ -112,13 +112,15 @@ def generate_expected_effect(
     
     # 5. 체중 변화량 (양수면 감량)
     weight_change = round(current_weight - predicted_weight_4weeks, 1)
-    
+    bmi_change = round(predicted_bmi_4weeks - current_bmi, 1)
+
     return {
         "current_weight": current_weight,
         "current_bmi": current_bmi,
         "predicted_weight_4weeks": predicted_weight_4weeks,
         "predicted_bmi_4weeks": predicted_bmi_4weeks,
         "weight_change_4weeks": weight_change,
+        "bmi_change_4weeks": bmi_change,
         "total_exercise_minutes": total_exercise_minutes,
         "weekly_predictions": weekly_predictions
     }
