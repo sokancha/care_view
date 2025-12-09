@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import date, timedelta
-from typing import List, Dict
+from typing import Dict, List
 
 from app.models.main_health_metric import HealthMetric
 
@@ -33,18 +32,8 @@ def predict_weight_change(
     daily_calorie_burn: float
 ) -> Dict:
     """
-    4주 후 체중 변화 예측
-    
-    Args:
-        db: 데이터베이스 세션
-        user_id: 사용자 ID
-        current_weight: 현재 체중 (kg)
-        daily_calorie_burn: 일일 운동 칼로리 소모 (kcal)
-    
-    Returns:
-        주차별 예측 데이터
+    4주 후 체중 변화 예측 (로직 유지)
     """
-    
     # 기본 칼로리 계산 (1kg 감량 = 7,700 kcal)
     CALORIES_PER_KG = 7700
     
@@ -75,30 +64,17 @@ def generate_expected_effect(
 ) -> Dict:
     """
     기대 효과 데이터 생성
-    
-    Args:
-        db: 데이터베이스 세션
-        user_id: 사용자 ID
-        current_weight: 현재 체중 (kg)
-        height_cm: 키 (cm)
-        daily_calorie_burn: 추천 운동의 일일 칼로리 소모 (kcal)
-    
-    Returns:
-        기대 효과 전체 데이터
     """
     
     # 1. 현재 BMI 계산
     current_bmi = calculate_bmi(current_weight, height_cm)
     
-    # 2. 4주 후 체중 예측
+    # 2. 4주 후 체중 예측 계산 (로직 유지)
     prediction_data = predict_weight_change(
         db, user_id, current_weight, daily_calorie_burn
     )
     
-    predicted_weight_4weeks = prediction_data["predictions"][3]["predicted_weight"]
-    predicted_bmi_4weeks = calculate_bmi(predicted_weight_4weeks, height_cm)
-    
-    # 3. 주차별 BMI 계산
+    # 3. 주차별 BMI 계산 (로직 유지)
     weekly_predictions = []
     for pred in prediction_data["predictions"]:
         weekly_predictions.append({
@@ -110,17 +86,10 @@ def generate_expected_effect(
     # 4. 총 운동시간 (분)
     total_exercise_minutes = get_total_exercise_minutes(db, user_id)
     
-    # 5. 체중 변화량 (양수면 감량)
-    weight_change = round(current_weight - predicted_weight_4weeks, 1)
-    bmi_change = round(predicted_bmi_4weeks - current_bmi, 1)
-
+    # 5. 결과 반환 (수정됨: 중복 필드 제거, 필요한 데이터만 리턴)
     return {
         "current_weight": current_weight,
         "current_bmi": current_bmi,
-        "predicted_weight_4weeks": predicted_weight_4weeks,
-        "predicted_bmi_4weeks": predicted_bmi_4weeks,
-        "weight_change_4weeks": weight_change,
-        "bmi_change_4weeks": bmi_change,
         "total_exercise_minutes": total_exercise_minutes,
         "weekly_predictions": weekly_predictions
     }
