@@ -8,7 +8,7 @@ from datetime import date as date_type  # ⬅️ 별칭 사용
 class UserBasicInfo(BaseModel):
     """사용자 기본 정보 (왼쪽 프로필)"""
     full_name: Optional[str] = Field(None, description="이름")
-    age: Optional[int] = Field(None, description="나이")
+    date_of_birth: Optional[int] = Field(None, description="나이")
     height_cm: Optional[float] = Field(None, description="신장 (cm)")
     bmi: Optional[float] = Field(None, description="최신 BMI")
 
