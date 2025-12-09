@@ -18,6 +18,7 @@ class ExpectedEffectResponse(BaseModel):
     predicted_weight_4weeks: float = Field(..., description="4주 후 예상 체중 (kg)")
     predicted_bmi_4weeks: float = Field(..., description="4주 후 예상 BMI")
     weight_change_4weeks: float = Field(..., description="4주간 예상 체중 변화 (kg, 양수면 감량)")
+    bmi_change_4weeks: float = Field(..., description="4주간 예상 BMI 변화")
     
     # 총 운동시간
     total_exercise_minutes: float = Field(..., description="오늘까지 총 운동시간 (분)")
