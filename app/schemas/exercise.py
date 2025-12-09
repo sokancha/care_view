@@ -14,7 +14,6 @@ class ExerciseItem(BaseModel):
 
 class ExerciseSet(BaseModel):
     """시간대별 운동 세트 (아침/점심/저녁)"""
-    time_slot: str = Field(description="시간대 (아침/점심/저녁)")
     exercises: List[ExerciseItem] = Field(description="운동 구성 (준비+본+마무리)")
     total_duration_min: int = Field(description="세트 총 소요시간")
     total_calorie_kcal: int = Field(description="세트 총 칼로리")
@@ -33,7 +32,6 @@ class ExerciseRecommendationResponse(BaseModel):
         "json_schema_extra": {
             "example": {
                 "morning": {
-                    "time_slot": "아침",
                     "exercises": [
                         {
                             "movement_name": "동적 스트레칭",
@@ -58,13 +56,11 @@ class ExerciseRecommendationResponse(BaseModel):
                     "total_calorie_kcal": 220
                 },
                 "lunch": {
-                    "time_slot": "점심",
                     "exercises": [],
                     "total_duration_min": 30,
                     "total_calorie_kcal": 180
                 },
                 "dinner": {
-                    "time_slot": "저녁",
                     "exercises": [],
                     "total_duration_min": 25,
                     "total_calorie_kcal": 160
