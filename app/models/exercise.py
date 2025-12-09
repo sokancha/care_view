@@ -29,7 +29,7 @@ class UserMaster(Base):
     exercise_links = relationship("UserExerciseLink", back_populates="user_group")
     
     __table_args__ = (
-        UniqueConstraint('age_group', 'bmi_grade', 'gender', name='uq_user_group'),
+        UniqueConstraint('age_group', 'bmi_grade', name='uq_user_group'),
     )
 
     def __repr__(self):
