@@ -69,19 +69,16 @@ def get_exercise_recommendation(
     # 4. 응답 구성
     return ExerciseRecommendationResponse(
         morning=ExerciseSet(
-            time_slot=recommendation["morning"]["time_slot"],
             exercises=[ExerciseItem(**ex) for ex in recommendation["morning"]["exercises"]],
             total_duration_min=recommendation["morning"]["total_duration_min"],
             total_calorie_kcal=recommendation["morning"]["total_calorie_kcal"]
         ),
         lunch=ExerciseSet(
-            time_slot=recommendation["lunch"]["time_slot"],
             exercises=[ExerciseItem(**ex) for ex in recommendation["lunch"]["exercises"]],
             total_duration_min=recommendation["lunch"]["total_duration_min"],
             total_calorie_kcal=recommendation["lunch"]["total_calorie_kcal"]
         ),
         dinner=ExerciseSet(
-            time_slot=recommendation["dinner"]["time_slot"],
             exercises=[ExerciseItem(**ex) for ex in recommendation["dinner"]["exercises"]],
             total_duration_min=recommendation["dinner"]["total_duration_min"],
             total_calorie_kcal=recommendation["dinner"]["total_calorie_kcal"]
