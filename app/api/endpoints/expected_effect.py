@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.schemas.expected_effect import ExpectedEffectResponse, WeeklyPrediction
+from app.schemas.expected_effect import ExpectedEffectResponse
 from app.api.dependencies import get_current_user
 from app.services import expected_effect_crud, exercise_crud
 from app.models.user import User
@@ -26,7 +26,6 @@ def get_expected_effect(
     추천 운동을 계속 할 경우 4주 후 예상 체중, BMI 변화를 보여줍니다.
     
     - 현재 체중/BMI
-    - 4주 후 예상 체중/BMI
     - 오늘까지 총 운동시간 (분)
     - 주차별 체중/BMI 예측 그래프 데이터
     """
@@ -86,15 +85,4 @@ def get_expected_effect(
     )
     
     # 5. 응답 구성
-    return ExpectedEffectResponse(
-        current_weight=effect_data["current_weight"],
-        current_bmi=effect_data["current_bmi"],
-        predicted_weight_4weeks=effect_data["predicted_weight_4weeks"],
-        predicted_bmi_4weeks=effect_data["predicted_bmi_4weeks"],
-        weight_change_4weeks=effect_data["weight_change_4weeks"],
-        bmi_change_4weeks=effect_data["bmi_change_4weeks"],
-        total_exercise_minutes=effect_data["total_exercise_minutes"],
-        weekly_predictions=[
-            WeeklyPrediction(**pred) for pred in effect_data["weekly_predictions"]
-        ]
-    )
+    return ExpectedEffectResponse(**effect_data)
