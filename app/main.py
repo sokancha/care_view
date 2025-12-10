@@ -19,6 +19,7 @@ origins = [
     "http://localhost:3000",  
     "http://localhost:8000",
     "http://localhost:5173",
+    "https://careview-frontend.onrender.com"
 ]
 # 3. 미들웨어 추가
 app.add_middleware(
