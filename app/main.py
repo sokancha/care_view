@@ -20,7 +20,7 @@ origins = [
     "http://localhost:8000",
     "http://localhost:5173",
     "https://careview-front.onrender.com",
-    "careview.kro.kr",
+    "https://careview.kro.kr",
     "www.careview.kro.kr",
 ]
 # 3. 미들웨어 추가
