@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Text, ForeignKey
 from sqlalchemy.orm import relationship
-from app.core.database import Base # 사용자님의 프로젝트 구조에 맞추어 Base 클래스를 가져옵니다.
+from app.core.database import Base 
 
 class CookingStep(Base):
     """
