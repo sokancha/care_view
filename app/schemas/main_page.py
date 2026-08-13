@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import date as date_type  # ⬅️ 별칭 사용
+from datetime import date as date_type  
 
 
 
