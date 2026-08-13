@@ -13,31 +13,24 @@ class User(Base):
     """
     __tablename__ = "users"
 
-    # 1. 핵심 인증 정보
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String) 
     
-    # 2. 사용자 식별 정보
     full_name = Column(String, index=True, nullable=True)
     gender = Column(String, nullable=True) 
     
-    # 3. 서비스 및 계정 상태
     provider = Column(String, default="email")
     is_active = Column(Boolean, default=True)
     
-    # 4. 약관 동의 정보
     is_terms_agreed = Column(Boolean, default=False, nullable=False)
     is_privacy_agreed = Column(Boolean, default=False, nullable=False)
     is_marketing_agreed = Column(Boolean, nullable=False, default=False)
     
-    # 5. 시간 정보
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
-    # 6. 관계 (Relationships)
+
     config = relationship("OnboardingConfig", back_populates="user", uselist=False)
     
-    # 🚨 추가: HealthMetric과 1:N 관계 설정
     metrics = relationship("HealthMetric", back_populates="user", cascade="all, delete-orphan")
     
 
