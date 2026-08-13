@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
-from app.core.database import Base # app.core.database에서 정의된 Base를 가져옵니다.
+from app.core.database import Base 
 
 
 user_allergy_association = Table(
