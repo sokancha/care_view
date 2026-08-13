@@ -26,10 +26,10 @@ origins = [
 # 3. 미들웨어 추가
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,              # 허용할 출처 목록
-    allow_credentials=True,             # 자격 증명(쿠키, 인증 헤더) 전송 허용
-    allow_methods=["*"],                # 모든 HTTP 메서드 (GET, POST 등) 허용
-    allow_headers=["*"],                # 모든 HTTP 헤더 허용
+    allow_origins=origins,              
+    allow_credentials=True,             
+    allow_methods=["*"],                
+    allow_headers=["*"],                
 )
 
 app.include_router(user_api.router, tags=["Users"])
@@ -68,7 +68,6 @@ def custom_openapi():
     for route in openapi_schema["paths"].values():
         for method in route.values():
             tags = method.get('tags', [])
-            # 🚨 수정: 인증이 필요한 모든 태그에 보안 적용
             if tags and any(tag in ['Users', 'Onboarding', 'Record', 'Main Page', 'meals', 'Exercise', 'Expected Effect'] for tag in tags):
                 method["security"] = security_requirement
 
