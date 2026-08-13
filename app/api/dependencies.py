@@ -1,4 +1,4 @@
-# FastAPI의 핵심 의존성 로직을 정의 -> 라우터 간에 재사용 ㅇ
+
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -18,7 +18,6 @@ def get_current_user(
     db: Session = Depends(get_db), 
     token: str = Depends(oauth2_scheme)
 ) -> User:
-    # HTTP Bearer 토큰을 검증하고, 현재 로그인된 사용자 객체를 반환
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -29,12 +28,10 @@ def get_current_user(
     if payload is None:
         raise credentials_exception
 
-    # 사용자 ID (sub) 추출
     user_id = payload.get("sub")
     if user_id is None:
         raise credentials_exception
 
-    # DB에서 사용자 ID로 사용자 객체 조회
     user = user_crud.get_user_by_id(db, user_id=user_id) 
     
     if user is None:
